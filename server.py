@@ -47,14 +47,18 @@ while True:
             data = connection.recv(2000).decode()
             if data:
                 print('received "%s"' % data)
-                # Client message is written to the log file
-                file.write(data)
+                # Client message is logged
+                file.write('Client : ' + data)
                 file.write('\n')
                 # print('sending data back to the client')
                 # encode() function returns bytes object
                 # connection.sendall(data.encode())
                 reply = input('Enter a message to send back to the client :: ')
+                # Server message is sent, and the server awaits a response
                 connection.sendall(reply.encode())
+                # Server message is logged
+                file.write('Server : ' + reply)
+                file.write('\n')
                 print('Awaiting response from the client')
             else:
                 print('no more data from', client_address)
@@ -63,8 +67,8 @@ while True:
                 # File is then closed.
                 file.close()
                 # Notice from server stating that the message has been logged to a file
-                print('The message has been written to a file')
-                print('Check client_output.txt for more details')
+                print('This chat has been logged to a file')
+                print('Check client_output.txt to see the logged chat')
                 break
 
     finally:
