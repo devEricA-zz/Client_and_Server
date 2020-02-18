@@ -1,7 +1,7 @@
-
-Message logged at February 11, 2020 at 10:54:25reads
-Test 1
-Message logged at February 11, 2020 at 10:54:36reads
-Test 2 means I go leroy jenkins
-Message logged at February 11, 2020 at 10:55:39reads
-Test 3 we had a strange error before
+Chat logged at February 18, 2020 at 09:06:51 reads
+Client : Hello Hello
+Server : Hey! Looks like you got it working!
+Client : Yep, I feel quite satisfied
+Server : Beautiful
+Client : Now where's my internship?
+Server : It will come, just be patient.
