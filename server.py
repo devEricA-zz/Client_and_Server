@@ -32,30 +32,35 @@ while True:
 
     # Now the server waits for a connection
     print('*** Waiting for a connection ***')
+    print('Please wait for Client to connect, as he/she will talk first')
     # accept() returns an open connection between the server and client, along with the address of the client
     connection, client_address = sock.accept()
     # Opens the log file for appending - we don't want old log data to be overwritten
     file = open('client_output.txt', 'a')
     try:
         print('connection from', client_address)
-        # Writes the time and date that the client jotted the message to the log file 
-        file.write('Message logged at ' + date.today().strftime("%B %d, %Y") + ' at ' + datetime.now(). strftime("%H:%M:%S") + ' reads\n')
+        # Writes the time and date that the client jotted the message to the log file
+        file.write('Chat logged at ' + date.today().strftime("%B %d, %Y") + ' at ' + datetime.now(). strftime("%H:%M:%S") + ' reads\n')
         # Receive the data in small chunks and retransmit it
         while True:
             # decode() function returns string object
-            data = connection.recv(16).decode()
+            data = connection.recv(2000).decode()
             if data:
                 print('received "%s"' % data)
                 # Client message is written to the log file
                 file.write(data)
-                print('sending data back to the client')
+                file.write('\n')
+                # print('sending data back to the client')
                 # encode() function returns bytes object
-                connection.sendall(data.encode())
+                # connection.sendall(data.encode())
+                reply = input('Enter a message to send back to the client :: ')
+                connection.sendall(reply.encode())
+                print('Awaiting response from the client')
             else:
                 print('no more data from', client_address)
                 # We write a blank line in order to ensure the log file formats the next message from the client neatly
                 file.write('\n')
-                # File is then closed. 
+                # File is then closed.
                 file.close()
                 # Notice from server stating that the message has been logged to a file
                 print('The message has been written to a file')
