@@ -9,13 +9,15 @@ sock = socket(AF_INET, SOCK_STREAM)
 
 # Greeting for user using the client
 print('Welcome to the simple client and server chat program')
-
+print('Use to talk with a person on a server side. Type EXIT() when done')
 # Python function used in order to ensure a connection to the server
 # without a crash
 def connect():
     try:
         # Acquires the host name and IP address from user input using input
-        host_name = input('Please enter the name of the host that you want to connect to :: ')
+        host_name = input('Please enter the name of the host that you want to connect to, or type E to exit :: ')
+        if host_name == 'E' or host_name == 'e':
+            return '-1', '-1'
         IP_address = gethostbyname(str(host_name))
         # set values for host using the host name - meaning this machine and port number 10000
         # the machine address and port number have to be the same as the server is using.
@@ -30,39 +32,56 @@ def connect():
         # In the event where the user fails to make a connection
         # print an error message
         print('ERROR: Failed to connect.')
+
         # Call the connect method so the user can connect again
         return connect()
 
 # Get the host name and IP address using the previously created method.
 host_name, IP_address = connect()
-# host_name = connect()
-# Prints the Host name and IP address to the console
-print('Host name is :: ' + host_name)
-print('IP address :: ' + IP_address)
-try:
-    #Need a forever while loop in order to allow the client to talk to the server
-    while True:
-        # Ask for user to input a message into the console, and then send that message.
-        message = input('Enter a message to send to the server :: ')
-        print('sending "%s"' % message)
-        # Once message is sent to the server, the client awaits a response
-        print('Awaiting response from the server')
-        # Data is transmitted to the server with sendall()
-        # encode() function returns bytes object
-        sock.sendall(message.encode())
-        # Look for the response
-        amount_received = 0
-    	# Data is read from the connection with recv()
-        # decode() function returns string object
-        data = sock.recv(2000).decode()
-        amount_received += len(data)
-        # Get the current date and time
-        date = datetime.today().strftime("%B %d, %Y")
-        time =  datetime.now().strftime("%H:%M:%S")
-        # print data received from the server, and the time and date the client got the data
-        print('received "%s" on %s at %s' % (data, date, time))
+if host_name != '-1':
+    # Prints the Host name and IP address to the console
+    print('Host name is :: ' + host_name)
+    print('IP address :: ' + IP_address)
+    try:
+        #Need a forever while loop in order to allow the client to talk to the server
+        while True:
+            # Ask for user to input a message into the console, and then send that message.
+            message = input('Enter a message to send to the server :: ')
+            print('sending "%s"' % message)
+            # Data is transmitted to the server with sendall()
+            # encode() function returns bytes object
+            sock.sendall(message.encode())
+            # If the server wants to exit, we inform the user that he/she has requested an end to the session
+            # and then we exit the loop
+            if message == 'EXIT()':
+                print('You have requested an end to the session')
+                print('Exiting program')
+                break
+            # Once message is sent to the server, the client awaits a response
+            print('Awaiting response from the server')
+            # Look for the response
+            amount_received = 0
+        	# Data is read from the connection with recv()
+            # decode() function returns string object
+            data = sock.recv(2000).decode()
+            amount_received += len(data)
+            # If the data received is EXIT() we know the server wants to end the session
+            # so we end the session
+            if data == 'EXIT()':
+                print('The server has requested an end to the session')
+                print('Exiting program')
+                break
+            # Get the current date and time
+            date = datetime.today().strftime("%B %d, %Y")
+            time =  datetime.now().strftime("%H:%M:%S")
+            # print data received from the server, and the time and date the client got the data
+            print('received "%s" on %s at %s' % (data, date, time))
 
-finally:
-    # Close the socket
+    finally:
+        # Close the socket
+        print('closing socket')
+        sock.close()
+else:
+    print('The exit code has been entered')
     print('closing socket')
     sock.close()
